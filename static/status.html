@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Conversion</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
+    <script>
+         var conn = new SockJS('http://' + window.location.host + ':8084/ws');
+         conn.onmessage = function(e){
+             console.log(e);
+         }
+    </script>
+</head>
+<body>
+    <h2>Conversion in progress</h2>
+</body>
+</html>

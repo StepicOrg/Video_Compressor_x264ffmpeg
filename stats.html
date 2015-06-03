@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+  <script src="http://yandex.st/jquery/flot/0.7/jquery.flot.min.js"></script>
+  <script src="http://cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
+  <script>
+    $(function() {
+        var conn = new SockJS('http://' + window.location.host + '/statsconn');
+        conn.onmessage = function(e) {
+            console.log(e.data);
+        };
+        conn.onopen = function() {
+        function sendPing()
+        {
+          conn.send('msg');
+            console.log('Tried!((');
+
+          timer = setTimeout(sendPing, 100);
+        }
+        timer = setTimeout(sendPing, 100);
+      };
+    });
+</script>
+</head>
+<body>
+  <h3>Connection stats!</h3>
+  <div>
+   <div id="placeholder" style="width:920px;height:400px;float:left;"></div>
+   <div id="table"></div>
+  </div>
+</body>
+</html>
