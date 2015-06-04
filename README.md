@@ -14,7 +14,7 @@ Stack used:<br>
 </ul>
 
 <h2>Installation:</h2>
-    <code>brew install nginx-full --with-upload-module</code><br>
-    <code>pip3 install -r requirements.txt</code>
+    brew install nginx-full --with-upload-module
+    pip3 install -r requirements.txt
 
 
