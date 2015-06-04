@@ -1,13 +1,12 @@
 import threading
-import queue as Queue
-import time, random
+import random
 import subprocess, os
 from STATE import GlobalSessionsTable
 
 class ConverterQueue(threading.Thread):
 
-    def __init__(self, queue):
-        self.__queue = queue
+    def __init__(self, _queue):
+        self.__queue = _queue
         threading.Thread.__init__(self)
 
     def run(self):
@@ -20,7 +19,6 @@ class ConverterQueue(threading.Thread):
             t.start()
             self.__queue.task_done()
 
-
     def is_empty(self):
         return not self.__queue.unfinished_tasks
 
@@ -28,13 +26,10 @@ def do_convertion(task_item):
     x = random.randint(10,10000)
     print("Converting! ", task_item, x)
     task_item.run()
-    # time.sleep(random.randint(1000, 5000) / 1000.0)
     print("Watcher Socket:", GlobalSessionsTable[task_item.watchers])
     SocketToWatcher = GlobalSessionsTable[task_item.watchers]
     SocketToWatcher.send("done")
     print("Done ", x)
-    task_item.close_pipe()
-
 
 class ConverterTask(object):
 
@@ -45,9 +40,4 @@ class ConverterTask(object):
 
     def run(self):
         print("Running from ", self.source_file, " to ", self.dest)
-        command = "ffmpeg -i " + self.source_file + " " + self.dest
-        proc = subprocess.call(['ffmpeg', '-i', self.source_file, self.dest, '-y'])
-        # self.pid = proc.pid
-
-    def close_pipe(self):
-        pass
+        subprocess.call(['ffmpeg', '-i', self.source_file, self.dest, '-y'])

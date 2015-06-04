@@ -26,7 +26,6 @@ var UploadForm = React.createClass({
 });
 
 
-
 var uploadForm = React.render(
     <UploadForm />, document.getElementById('upload_form')
 );

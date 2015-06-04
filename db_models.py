@@ -1,10 +1,8 @@
-import os
-import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from settings import URL_GET_FILE_PATH
 
 Base = declarative_base()
 
@@ -14,6 +12,10 @@ class FileLookup(Base):
     id = Column(Integer, primary_key=True)
     md5_name = Column(String(250), nullable=False)
     real_name = Column(String)
+
+    @property
+    def url(self):
+        return URL_GET_FILE_PATH + "/" + self.md5_name
 
 
 engine = create_engine('sqlite:///compressor.db')

@@ -8,6 +8,7 @@ __pycache__/
 
 uploads/
 ready/
+compressor.db
 
 # C extensions
 *.so

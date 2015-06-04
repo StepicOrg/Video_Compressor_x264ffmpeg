@@ -1,16 +1,10 @@
 import tornado.httpserver, tornado.web, tornado.ioloop, os.path
 from shutil import move
-from sockjs.tornado import SockJSConnection, SockJSRouter, sessioncontainer
-import sqlite3, sqlalchemy
+from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import session, FileLookup
 import queue
 from converter import ConverterQueue, ConverterTask
-import asyncio
-import zmq
 from STATE import GlobalSessionsTable
-
-
-context = zmq.Context()
 
 
 __UPLOADS__ = "uploads"
@@ -26,6 +20,7 @@ def insert_to_db(md5_name, file_name):
     new_file = FileLookup(md5_name=md5_name, real_name=file_name)
     session.add(new_file)
     session.commit()
+    return new_file
 
 
 class RequestHandler(tornado.web.RequestHandler):
@@ -44,11 +39,7 @@ class RequestHandler(tornado.web.RequestHandler):
         file_ext = fname.split('.')[-1]
         new_fname = ".".join([file_hash, file_ext])
         move(file_path, '%s/%s' % (self.dest_dir, new_fname))
-        insert_to_db(new_fname, fname)
-
-        # socket = context.socket(zmq.REQ)
-        # socket.connect("tcp://localhost:5555")
-        # socket.send(b"Hello")
+        rec_obj = insert_to_db(new_fname, fname)
 
         global converterQueue
         global mainQueue
@@ -62,7 +53,7 @@ class RequestHandler(tornado.web.RequestHandler):
         else:
             mainQueue.put(task)
 
-        self.render("static/status.html", token=file_hash)
+        self.render("static/status.html", token=file_hash, file_url=rec_obj.url)
 
 
 class MainPageHandler(tornado.web.RequestHandler):
@@ -75,33 +66,30 @@ class ConvertionStatusPage(tornado.web.RequestHandler):
 
 class ConvertionStatus(SockJSConnection):
 
+    def __init__(self, *args, **kwargs):
+        self.global_obj_key = ""
+        SockJSConnection.__init__(self, *args, **kwargs)
+
     def on_open(self, info):
-        import random
-        print('SOMEONE CONNECTED!!!', self)
-        # self.loop = tornado.ioloop.PeriodicCallback(self._send_stats, 1000)
-        # self.r = random.randint(10, 100000)
-        # self.loop.start()
+        print('Someone connected', self, info)
 
     def on_message(self, data):
+        self.global_obj_key = data
         GlobalSessionsTable[data] = self
 
-    # def on_close(self):
-    #     self.loop.stop()
-
-    # def _send_stats(self):
-    #     data = self.r
-    #     self.send(data)
+    def on_close(self):
+        del GlobalSessionsTable[self.global_obj_key]
 
 
 WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
-
-
 #Main App
 static_path = os.path.join(os.path.dirname(__file__), "static")
+get_files_path = os.path.join(os.path.dirname(__file__), "ready")
 application = tornado.web.Application([(r'/', MainPageHandler), (r'/upload', RequestHandler),
                                        (r'/status', ConvertionStatusPage),
-                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})])
+                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path}),
+                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": get_files_path})])
 
 #Sockets App
 ws_app = tornado.web.Application(WsRouter.urls)
