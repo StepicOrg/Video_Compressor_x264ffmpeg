@@ -6,11 +6,23 @@
     <script>
          var conn = new SockJS('http://' + window.location.host + ':8084/ws');
          conn.onmessage = function(e){
+             if (e.type === 'message' && e.data==="done"){
+                 $('#notReady').text("READY! GRAB YOUR FILE!");
+             }
              console.log(e);
+         };
+        conn.onopen = function(e){
+           console.log("OPENED");
+            conn.send($('#token').text())
          }
     </script>
 </head>
 <body>
     <h2>Conversion in progress</h2>
+    <div id="notReady">
+        Your token is <span id="token">{{ token }}</span>
+        We will notify you on this page when conversion ends, or you can visit
+        <a href="/get/"{{token}}>Your file page</a>
+    </div>
 </body>
 </html>

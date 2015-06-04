@@ -1,31 +1,26 @@
 import tornado.httpserver, tornado.web, tornado.ioloop, os.path
 from shutil import move
-from sockjs.tornado import SockJSConnection, SockJSRouter, proto
+from sockjs.tornado import SockJSConnection, SockJSRouter, sessioncontainer
 import sqlite3, sqlalchemy
 from db_models import session, FileLookup
 import queue
-from converter import ConverterQueue
+from converter import ConverterQueue, ConverterTask
 import asyncio
 import zmq
+from STATE import GlobalSessionsTable
+
 
 context = zmq.Context()
 
 
+__UPLOADS__ = "uploads"
+__COMPRESSED_FILES_FOLDER__ = "ready"
 
-__UPLOADS__ = "uploads/"
+mainQueue = queue.Queue(0)
+converterQueue = ConverterQueue(mainQueue)
+WORKERS = 4
 
-# db = sqlite3.connect('compressor_db')
-# db = sqlalchemy.create_engine('sqlite:///compressor_db')
 
-# def instert_to_db(_md5_name, _file_name):
-#     cursor = db.
-#     md5_name = _md5_name
-#     file_name = _file_name
-#
-#     cursor.execute('''INSERT INTO files(md5_name, real_name)
-#                       VALUES(?,?)''', (md5_name, file_name))
-#     print('inserted!')
-#     db.commit()
 
 def insert_to_db(md5_name, file_name):
     new_file = FileLookup(md5_name=md5_name, real_name=file_name)
@@ -51,15 +46,28 @@ class RequestHandler(tornado.web.RequestHandler):
         move(file_path, '%s/%s' % (self.dest_dir, new_fname))
         insert_to_db(new_fname, fname)
 
+        # socket = context.socket(zmq.REQ)
+        # socket.connect("tcp://localhost:5555")
+        # socket.send(b"Hello")
 
-        socket = context.socket(zmq.REQ)
-        socket.connect("tcp://localhost:5555")
-        socket.send(b"Hello")
+        global converterQueue
+        global mainQueue
+        task = ConverterTask('%s/%s' % (self.dest_dir, new_fname), '%s/%s' % (__COMPRESSED_FILES_FOLDER__, new_fname), curr=file_hash)
+        GlobalSessionsTable[file_hash] = 0
+        if converterQueue.is_empty():
+            mainQueue = queue.Queue(0)
+            converterQueue = ConverterQueue(mainQueue)
+            mainQueue.put(task)
+            converterQueue.start()
+        else:
+            mainQueue.put(task)
+
+        self.render("static/status.html", token=file_hash)
 
 
-        self.redirect('/status')
-
-
+class MainPageHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("static/index.html")
 
 class ConvertionStatusPage(tornado.web.RequestHandler):
     def get(self):
@@ -68,33 +76,34 @@ class ConvertionStatusPage(tornado.web.RequestHandler):
 class ConvertionStatus(SockJSConnection):
 
     def on_open(self, info):
-        print('SOMEONE CONNECTED!!!')
-        self.loop = tornado.ioloop.PeriodicCallback(self._send_stats, 1000)
-        self.loop.start()
+        import random
+        print('SOMEONE CONNECTED!!!', self)
+        # self.loop = tornado.ioloop.PeriodicCallback(self._send_stats, 1000)
+        # self.r = random.randint(10, 100000)
+        # self.loop.start()
 
     def on_message(self, data):
-        pass
+        GlobalSessionsTable[data] = self
 
-    def on_close(self):
-        self.loop.stop()
+    # def on_close(self):
+    #     self.loop.stop()
 
-    def _send_stats(self):
-        data = "IM FINE!"
-        self.send(data)
+    # def _send_stats(self):
+    #     data = self.r
+    #     self.send(data)
 
 
 WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
 
-@asyncio.coroutine
-def hello_world():
-    print("Hello World!")
-    import random, time
-    time.sleep(random.randint(10, 100) / 1000.0)
-    print("Done")
 
+#Main App
+static_path = os.path.join(os.path.dirname(__file__), "static")
+application = tornado.web.Application([(r'/', MainPageHandler), (r'/upload', RequestHandler),
+                                       (r'/status', ConvertionStatusPage),
+                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path})])
 
-application = tornado.web.Application([(r'/upload', RequestHandler), (r'/status', ConvertionStatusPage)],)
+#Sockets App
 ws_app = tornado.web.Application(WsRouter.urls)
 
 
@@ -104,8 +113,3 @@ if __name__=='__main__':
     ws_app.listen(8084)
  
     tornado.ioloop.IOLoop.instance().start()
-
-    loop = asyncio.get_event_loop()
-    # Blocking call which returns when the hello_world() coroutine is done
-    loop.run_until_complete(hello_world())
-    loop.close()
