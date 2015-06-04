@@ -11,7 +11,7 @@ Stack used:<br>
 <li>tornado, for async workers and websockets</li>
 <li>sockjs-tornado, for pushing notification directly</li>
 <li>react.js, because it's cool</li>
-<ul>
+</ul>
 
 <h2>Installation:</h2>
     <code>brew install nginx-full --with-upload-module</code><br>
