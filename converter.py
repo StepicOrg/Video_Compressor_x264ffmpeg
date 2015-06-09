@@ -1,35 +1,32 @@
 import threading
-import random
 import subprocess, os
-from STATE import GlobalSessionsTable
+from settings import MAX_WORKERS
 
 class ConverterQueue(threading.Thread):
 
-    def __init__(self, _queue):
+    WORKERS = 0
+    converter_func_obj = None
+
+    def __init__(self, _queue, _converter_func_obj):
         self.__queue = _queue
+        self.converter_func_obj = _converter_func_obj
         threading.Thread.__init__(self)
 
     def run(self):
         while True:
-            task_item = self.__queue.get()
-            if task_item is None:
-                break
-            t = threading.Thread(target=do_convertion, args=(task_item, ))
-            t.daemon = True
-            t.start()
-            self.__queue.task_done()
+            if self.WORKERS <= MAX_WORKERS :
+                task_item = self.__queue.get()
+                if task_item is None:
+                    break
+
+                t = threading.Thread(target=self.converter_func_obj, args=(task_item, ))
+                t.daemon = True
+                self.WORKERS += 1
+                t.start()
+                self.__queue.task_done()
 
     def is_empty(self):
         return not self.__queue.unfinished_tasks
-
-def do_convertion(task_item):
-    x = random.randint(10,10000)
-    print("Converting! ", task_item, x)
-    task_item.run()
-    print("Watcher Socket:", GlobalSessionsTable[task_item.watchers])
-    SocketToWatcher = GlobalSessionsTable[task_item.watchers]
-    SocketToWatcher.send("done")
-    print("Done ", x)
 
 class ConverterTask(object):
 

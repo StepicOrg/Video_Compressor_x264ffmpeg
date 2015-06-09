@@ -9,25 +9,38 @@
     <script type="text/jsx" src="/static/react_renders.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script>
+    window.FileAPI = {
+          debug: false // debug mode
+        , staticPath: '/js/jquery.fileapi/FileAPI/' // path to *.swf
+    };
+    </script>
+    <script src="/static/js/jquery.fileapi/FileAPI/FileAPI.min.js"></script>
+    <script src="/static/js/jquery.fileapi/FileAPI/FileAPI.exif.js"></script>
+    <script src="/static/js/jquery.fileapi/jquery.fileapi.min.js"></script>
+    <script type="text/jsx" src="/static/main.js"></script>
 
 
 
-
-</head>
 
 </head>
 <body>
 
-<h2>Select files to upload</h2>
+<header>
+        <div id="headerMain">Loading</div>
+</header>
+    <div id="content">
+        <div class="custom-file-upload">
+            <form name="upload" method="POST" enctype="multipart/form-data" action="/upload">
+                <input type="file" id="file" name="infile" />
+                <button  type="submit" class="file-upload-button" tabindex="-1">Upload</button>
+            </form>
+        </div>
+    </div>
+<footer>
+    <div id="footer">footer</div>
+</footer>
 
-<form name="upload" method="POST" enctype="multipart/form-data" action="/upload">
 
-<input type="file" name="infile"><br>
-
-<input type="submit" name="submit" value="Upload">
-</form>
-<div>
-    <div id="upload_form"></div>
-</div>
 </body>
 </html>

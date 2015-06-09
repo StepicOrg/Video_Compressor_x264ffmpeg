@@ -1,1 +1,2 @@
 URL_GET_FILE_PATH = "get"
+MAX_WORKERS = 4

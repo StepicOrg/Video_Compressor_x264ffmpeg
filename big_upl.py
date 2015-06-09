@@ -2,22 +2,17 @@ import tornado.httpserver, tornado.web, tornado.ioloop, os.path
 from shutil import move
 from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import session, FileLookup
-import queue
-from converter import ConverterQueue, ConverterTask
-from STATE import GlobalSessionsTable
+from converter import ConverterTask
+from STATE import GlobalSessionsTable, renew_queue, converterQueue, mainQueue
 
 
 __UPLOADS__ = "uploads"
 __COMPRESSED_FILES_FOLDER__ = "ready"
 
-mainQueue = queue.Queue(0)
-converterQueue = ConverterQueue(mainQueue)
-WORKERS = 4
-
-
 
 def insert_to_db(md5_name, file_name):
-    new_file = FileLookup(md5_name=md5_name, real_name=file_name)
+    new_file = FileLookup(md5_name=md5_name, real_name=file_name,
+                           token="".join(str(md5_name).split(".")[0:-1]))
     session.add(new_file)
     session.commit()
     return new_file
@@ -41,15 +36,10 @@ class RequestHandler(tornado.web.RequestHandler):
         move(file_path, '%s/%s' % (self.dest_dir, new_fname))
         rec_obj = insert_to_db(new_fname, fname)
 
-        global converterQueue
-        global mainQueue
         task = ConverterTask('%s/%s' % (self.dest_dir, new_fname), '%s/%s' % (__COMPRESSED_FILES_FOLDER__, new_fname), curr=file_hash)
         GlobalSessionsTable[file_hash] = 0
         if converterQueue.is_empty():
-            mainQueue = queue.Queue(0)
-            converterQueue = ConverterQueue(mainQueue)
-            mainQueue.put(task)
-            converterQueue.start()
+            renew_queue(task)
         else:
             mainQueue.put(task)
 
@@ -80,6 +70,17 @@ class ConvertionStatus(SockJSConnection):
     def on_close(self):
         del GlobalSessionsTable[self.global_obj_key]
 
+class FileHandler(tornado.web.RequestHandler):
+    def get(self, token=None):
+        try:
+            url=session.query(FileLookup).filter(FileLookup.token==token)[0].url
+            print(url)
+        except IndexError:
+            url="None"
+        self.render("static/file_page.html", token=token, url=url)
+
+
+
 
 WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
@@ -89,7 +90,8 @@ get_files_path = os.path.join(os.path.dirname(__file__), "ready")
 application = tornado.web.Application([(r'/', MainPageHandler), (r'/upload', RequestHandler),
                                        (r'/status', ConvertionStatusPage),
                                        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path}),
-                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": get_files_path})])
+                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": get_files_path}),
+                                       (r"/file/([^/]*)", FileHandler)])
 
 #Sockets App
 ws_app = tornado.web.Application(WsRouter.urls)

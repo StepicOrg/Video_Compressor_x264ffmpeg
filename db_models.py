@@ -12,6 +12,7 @@ class FileLookup(Base):
     id = Column(Integer, primary_key=True)
     md5_name = Column(String(250), nullable=False)
     real_name = Column(String)
+    token = Column(String, nullable=False)
 
     @property
     def url(self):
@@ -20,6 +21,7 @@ class FileLookup(Base):
 
 engine = create_engine('sqlite:///compressor.db')
 
+# Base.metadata.create_all(engine)
 
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
