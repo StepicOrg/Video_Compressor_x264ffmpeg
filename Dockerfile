@@ -45,7 +45,7 @@ RUN mkdir nginx_folder \
     && mkdir 6 \
     && mkdir 7 \
     && mkdir 8 \
-    && mkdir 9 \
+    && mkdir 9
 
 RUN cd Video_Compressor_x264ffmpeg \
  && mkdir uploads \
