@@ -11,8 +11,12 @@ RUN yum install -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius
  && yum install -y openssl \
  && yum install -y openssl-devel \
  && yum -y groupinstall "Development Tools" \
- && yum install -y ffmpeg \
  && yum clean all
+
+RUN rpm -Uvh http://dl.atrpms.net/el6-x86_64/atrpms/stable/atrpms-repo-6-7.el6.x86_64.rpm
+
+RUN yum install -y ffmpeg ffmpeg-devel
+
 
 RUN git clone -b 2.2 https://github.com/vkholodkov/nginx-upload-module
 RUN curl -o nginx.tar.gz  http://nginx.org/download/nginx-1.9.1.tar.gz
