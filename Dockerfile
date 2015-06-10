@@ -26,5 +26,6 @@ RUN cd Video_Compressor_x264ffmpeg \
   && pip3 install -r requirements.txt
 
 RUN echo $(ls /bin)
+RUN echo $(find -name nginx)
 RUN /bin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf
 RUN python3 Video_Compressor_x264ffmpeg/big_upl.py
