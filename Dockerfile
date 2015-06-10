@@ -31,5 +31,5 @@ RUN mkdir nginx_folder \
     && cd upload \
     && mkdir tmp
 
-RUN ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf
-RUN python3 Video_Compressor_x264ffmpeg/big_upl.py
+RUN ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
+ && python3 Video_Compressor_x264ffmpeg/big_upl.py
