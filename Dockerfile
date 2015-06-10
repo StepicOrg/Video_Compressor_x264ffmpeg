@@ -10,4 +10,4 @@ RUN git clone https://github.com/mehanig/Video_Compressor_x264ffmpeg
 RUN cd Video_Compressor_x264ffmpeg \
   && pip3 install -r requirements.txt
 RUN yum install -y nginx
-RUN python3 big_upl.py
+RUN python3 Video_Compressor_x264ffmpeg/big_upl.py
