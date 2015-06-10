@@ -26,7 +26,6 @@ class RequestHandler(tornado.web.RequestHandler):
         pass
 
     def post(self):
-        print(self.request.body_arguments)
         fname = self.request.body_arguments.get('infile_name')[0].decode("utf-8")
         content_type = self.request.body_arguments.get('infile_content_type', None)[0].decode("utf-8")
         file_path = self.request.body_arguments.get('infile_path', '')[0].decode("utf-8")
