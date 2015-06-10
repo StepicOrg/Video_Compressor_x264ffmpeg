@@ -8,7 +8,7 @@ RUN yum install -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius
  && yum install -y gcc \
  && yum install -y pcre-devel \
  && yum install -y zlib-devel \
- && yum groupinstall "Development Tools" \
+ && yum -y groupinstall "Development Tools" \
  && yum clean all
 
 RUN git clone https://github.com/vkholodkov/nginx-upload-module
