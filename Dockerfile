@@ -42,6 +42,10 @@ RUN mkdir nginx_folder \
     && mkdir 8 \
     && mkdir 9 \
 
+RUN cd Video_Compressor_x264ffmpeg \
+ && mkdir uploads \
+ && mkdir ready
+
 EXPOSE 8080 8084
 
 CMD ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
