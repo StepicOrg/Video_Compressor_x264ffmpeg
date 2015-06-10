@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from settings import URL_GET_FILE_PATH
+import os.path
 
 Base = declarative_base()
 
@@ -21,7 +22,9 @@ class FileLookup(Base):
 
 engine = create_engine('sqlite:///compressor.db')
 
-# Base.metadata.create_all(engine)
+dbpath = os.path.join(os.path.dirname(__file__), "compressor.db")
+if not os.path.isfile(dbpath):
+    Base.metadata.create_all(engine)
 
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
