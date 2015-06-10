@@ -8,6 +8,7 @@ RUN yum install -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius
  && yum install -y gcc \
  && yum install -y pcre-devel \
  && yum install -y zlib-devel \
+ && yum install -y libssl-dev \
  && yum -y groupinstall "Development Tools" \
  && yum clean all
 
