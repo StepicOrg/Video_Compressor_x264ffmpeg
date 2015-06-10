@@ -1,4 +1,3 @@
 tornado >= 4.2
 toro >= 0.8
 sqlalchemy >= 1.0.4
-pika==0.9.8
