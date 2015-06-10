@@ -11,6 +11,7 @@ RUN yum install -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius
  && yum install -y openssl \
  && yum install -y openssl-devel \
  && yum -y groupinstall "Development Tools" \
+ && yum install -y ffmpeg \
  && yum clean all
 
 RUN git clone -b 2.2 https://github.com/vkholodkov/nginx-upload-module
