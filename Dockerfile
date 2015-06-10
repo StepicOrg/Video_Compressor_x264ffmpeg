@@ -33,5 +33,5 @@ RUN mkdir nginx_folder \
 
 EXPOSE 8080 8084
 
-RUN ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
+CMD ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
  && python3 Video_Compressor_x264ffmpeg/big_upl.py
