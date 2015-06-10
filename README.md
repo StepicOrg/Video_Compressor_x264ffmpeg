@@ -7,14 +7,16 @@ python3 only
 
 Stack used:<br>
 <ul>
+<li>Packed inside Docker container</li>
 <li>nginx, for handling big uploads</li>
 <li>tornado, for async workers and websockets</li>
 <li>sockjs-tornado, for pushing notification directly</li>
 <li>react.js, because it's cool</li>
 </ul>
 
-<h2>Installation:</h2>
-    brew install nginx-full --with-upload-module
-    pip3 install -r requirements.txt
+<h2>OSX Deployment:</h2>
+    install boot2docker
+    docker build -t video_compressor .
+    docker run -it -rm -p 8080:8080 -p 8084:8084 -t video_compressor
 
 
