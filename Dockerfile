@@ -4,6 +4,7 @@ MAINTAINER mehanig <mehanig@gmail.com>
 RUN yum install -y http://dl.iuscommunity.org/pub/ius/stable/CentOS/7/x86_64/ius-release-1.0-14.ius.centos7.noarch.rpm \
  && yum install -y python34u \
  && yum install -y git \
+ && yum install -y tar \
  && yum clean all
 
 RUN git clone https://github.com/vkholodkov/nginx-upload-module
