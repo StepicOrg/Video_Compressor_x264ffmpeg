@@ -25,8 +25,7 @@ RUN git clone https://github.com/mehanig/Video_Compressor_x264ffmpeg
 RUN cd Video_Compressor_x264ffmpeg \
   && pip3 install -r requirements.txt
 
-RUN echo $(ls /bin)
-RUN echo $(find -name nginx)
-RUN echo $(ls ./usr/local/nginx/sbin)
+RUN mkdir /nginx_folder/upload/tmp
+
 RUN ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf
 RUN python3 Video_Compressor_x264ffmpeg/big_upl.py
