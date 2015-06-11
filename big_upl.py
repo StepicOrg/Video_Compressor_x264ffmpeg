@@ -4,10 +4,7 @@ from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import session, FileLookup
 from converter import ConverterTask
 from STATE import GlobalSessionsTable, renew_queue, converterQueue, mainQueue
-
-
-__UPLOADS__ = "uploads"
-__COMPRESSED_FILES_FOLDER__ = "ready"
+from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__
 
 
 def insert_to_db(md5_name, file_name):
