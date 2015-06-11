@@ -17,6 +17,6 @@ Stack used:<br>
 <h2>OSX Deployment:</h2>
     install boot2docker
     docker build -t video_compressor .
-    docker run -it -rm -p 8080:8080 -p 8084:8084 -t video_compressor
+    docker run -it -rm -p 80:80 -p 8080:8080 -p 8084:8084 -t video_compressor
 
 
