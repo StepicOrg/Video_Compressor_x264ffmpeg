@@ -49,4 +49,4 @@ class ConverterTask(object):
         command = (['ffmpeg', '-i', self.source_file, '-c:v', 'libx264', '-crf', '26', '-maxrate', (str(self.data['target_bitrate'])+'k'),
                          '-bufsize', '1835k', self.dest, '-y'])
         print(command)
-        subprocess.Popen(command)
+        subprocess.call(command)
