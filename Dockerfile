@@ -30,26 +30,13 @@ RUN git clone https://github.com/mehanig/Video_Compressor_x264ffmpeg
 RUN cd Video_Compressor_x264ffmpeg \
   && pip3 install -r requirements.txt
 
-RUN mkdir nginx_folder \
-    && cd nginx_folder \
-    && mkdir upload \
-    && cd upload \
-    && mkdir tmp \
-    && cd tmp \
-    && mkdir 0 \
-    && mkdir 1 \
-    && mkdir 2 \
-    && mkdir 3 \
-    && mkdir 4 \
-    && mkdir 5 \
-    && mkdir 6 \
-    && mkdir 7 \
-    && mkdir 8 \
-    && mkdir 9
+RUN mkdir -p /nginx_folder/upload/tmp/{0..9}
+RUN chmod -R 777 /nginx_folder/upload/tmp/{0..9}
 
 RUN cd Video_Compressor_x264ffmpeg \
  && mkdir uploads \
  && mkdir ready
+
 
 EXPOSE 80 8080 8084
 
