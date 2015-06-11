@@ -87,7 +87,7 @@ WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 #Main App
 static_path = os.path.join(os.path.dirname(__file__), "static")
 get_files_path = os.path.join(os.path.dirname(__file__), "ready")
-application = tornado.web.Application([(r'/', MainPageHandler), (r'/upload', RequestHandler),
+application = tornado.web.Application([(r'/', MainPageHandler), (r'/uploaded', RequestHandler),
                                        (r'/status', ConvertionStatusPage),
                                        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path}),
                                        (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": get_files_path}),
