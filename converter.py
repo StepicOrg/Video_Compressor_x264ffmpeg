@@ -46,7 +46,7 @@ class ConverterTask(object):
 
     def run(self):
         print("Running from ", self.source_file, " to ", self.dest)
-        command = (['ffmpeg', '-i', self.source_file, '-c:v', 'libx264', '-crf', '26', '-maxrate', (str(self.data['target_bitrate'])+'k'),
+        command = (['ffmpeg', '-i', self.source_file, '-c:v', 'libx264', '-strict', '-2', '-crf', '26', '-maxrate', (str(self.data['target_bitrate'])+'k'),
                          '-bufsize', '1835k', self.dest, '-y'])
         print(command)
         subprocess.call(command)
