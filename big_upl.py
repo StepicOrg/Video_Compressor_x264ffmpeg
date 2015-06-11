@@ -4,7 +4,7 @@ from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import session, FileLookup
 from converter import ConverterTask
 from STATE import GlobalSessionsTable, renew_queue, converterQueue, mainQueue
-from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__
+from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
 
 
 def insert_to_db(md5_name, file_name):
@@ -82,12 +82,11 @@ class FileHandler(tornado.web.RequestHandler):
 WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
 #Main App
-static_path = os.path.join(os.path.dirname(__file__), "static")
-get_files_path = os.path.join(os.path.dirname(__file__), "ready")
+
 application = tornado.web.Application([(r'/', MainPageHandler), (r'/uploaded', RequestHandler),
                                        (r'/status', ConvertionStatusPage),
-                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": static_path}),
-                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": get_files_path}),
+                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": __STATIC__}),
+                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": __COMPRESSED_FILES_FOLDER__}),
                                        (r"/file/([^/]*)", FileHandler)])
 
 #Sockets App

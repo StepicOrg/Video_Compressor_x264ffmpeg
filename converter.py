@@ -1,5 +1,4 @@
 import threading
-import os
 from settings import MAX_WORKERS, DEFAULT_OUT_FILE_SIZE_BYTES
 from operations import *
 class ConverterQueue(threading.Thread):
@@ -24,6 +23,7 @@ class ConverterQueue(threading.Thread):
                 self.WORKERS += 1
                 t.start()
                 self.__queue.task_done()
+                self.WORKERS -= 1
 
     def is_empty(self):
         return not self.__queue.unfinished_tasks
