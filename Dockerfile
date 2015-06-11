@@ -35,7 +35,7 @@ RUN mkdir -p /nginx_folder/upload/tmp/{0..9}
 RUN chmod -R 777 /nginx_folder
 
 RUN cd Video_Compressor_x264ffmpeg \
- && mkdir -p video/uploads
+ && mkdir -p video/uploads \
  && mkdir -p video/converted
 
 EXPOSE 80 8080 8084
