@@ -51,7 +51,7 @@ RUN cd Video_Compressor_x264ffmpeg \
  && mkdir uploads \
  && mkdir ready
 
-EXPOSE 8080 8084
+EXPOSE 80 8080 8084
 
 CMD ./usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
  && python3 Video_Compressor_x264ffmpeg/big_upl.py
