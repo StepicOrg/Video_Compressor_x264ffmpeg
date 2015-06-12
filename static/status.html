@@ -15,6 +15,9 @@
          conn.onmessage = function(e){
              if (e.type === 'message' && e.data==="done"){
                  $('#notReady').text("READY! Grab your file!");
+             } else if (e.type === 'message') {
+                 $('#status-current').text(e.data.frame + ' of ' + e.data.all_frames);
+                 $('#status-percent').text("That's " + Math.floor(e.data.frame*100 / e.data.all_frames) + "%" );
              }
              console.log(e);
          };
@@ -31,6 +34,11 @@
     <div id="notReady">
         Your token is <span id="token">{{ token }}</span>
         We will notify you on this page when conversion ends, or you can visit {{file_url}}
+        <div id="status">
+            <span id="status-text">Status: </span> <span id="status-current">0</span>  <span id="status-text-frames"> frames converted</span>
+            <br>
+            <span id="status-percent"></span>
+        </div>
     </div>
     <div><a href={{file_url}}>Your file page</a></div>
 </body>

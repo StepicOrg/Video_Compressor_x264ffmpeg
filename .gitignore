@@ -9,6 +9,7 @@ __pycache__/
 uploads/
 ready/
 compressor.db
+video
 
 # C extensions
 *.so

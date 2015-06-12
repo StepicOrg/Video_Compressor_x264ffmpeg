@@ -1,9 +1,10 @@
-import tornado.httpserver, tornado.web, tornado.ioloop, os.path
+import tornado.httpserver, tornado.web, tornado.ioloop
 from shutil import move
+from settings import MAX_WORKERS
 from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import session, FileLookup
 from converter import ConverterTask
-from STATE import GlobalSessionsTable, renew_queue, converterQueue, mainQueue
+from STATE import GlobalSessionsTable
 from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
 
 
@@ -13,7 +14,6 @@ def insert_to_db(md5_name, file_name):
     session.add(new_file)
     session.commit()
     return new_file
-
 
 class RequestHandler(tornado.web.RequestHandler):
 
@@ -34,12 +34,8 @@ class RequestHandler(tornado.web.RequestHandler):
         rec_obj = insert_to_db(new_fname, fname)
 
         task = ConverterTask('%s/%s' % (self.dest_dir, new_fname), '%s/%s' % (__COMPRESSED_FILES_FOLDER__, new_fname), curr=file_hash)
-        GlobalSessionsTable[file_hash] = 0
-        if converterQueue.is_empty():
-            renew_queue(task)
-        else:
-            mainQueue.put(task)
-
+        converter = executor.submit(task.run)
+        converter.add_done_callback(lambda x: GlobalSessionsTable[task.watchers].send('done'))
         self.render("static/status.html", token=file_hash, file_url=rec_obj.url)
 
 
@@ -77,8 +73,10 @@ class FileHandler(tornado.web.RequestHandler):
         self.render("static/file_page.html", token=token, url=url)
 
 
+import concurrent.futures
 
 
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS)
 WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
 #Main App
@@ -97,5 +95,5 @@ if __name__=='__main__':
 
     application.listen(8080)
     ws_app.listen(8084)
- 
+
     tornado.ioloop.IOLoop.instance().start()

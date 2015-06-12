@@ -27,9 +27,17 @@ def get_bitrate(filename: str) -> int:
 def calc_target_bitrate(byte_size: int, length_sec: int) -> int:
     return int((byte_size*8)/(1024*length_sec))
 
+def get_frame_count(filename: str) -> int:
+    result = subprocess.Popen([FFPROBE_RUN_PATH, '-select_streams', 'v', '-show_streams', filename],
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    frames = [x.decode("utf-8") for x in result.stdout.readlines() if "nb_frames=" in x.decode('utf-8')][0]
+    return int(frames.split('=')[-1])
+
+
 if __name__ == '__main__':
     print(get_size('/Users/mehanig/Documents/MultTreadWorker.mp4'))
     print(get_bitrate('/Users/mehanig/Documents/MultTreadWorker.mp4'))
     print(get_bitrate_from_ffprobe('/Users/mehanig/Documents/MultTreadWorker.mp4'))
     print(get_length_in_sec('/Users/mehanig/Documents/MultTreadWorker.mp4'))
     print(calc_target_bitrate(3579947, 22))
+    print(get_frame_count('/Users/mehanig/Documents/MultTreadWorker.mp4'))
