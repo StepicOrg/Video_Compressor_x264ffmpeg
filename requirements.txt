@@ -2,3 +2,4 @@ tornado >= 4.2
 toro >= 0.8
 sqlalchemy >= 1.0.4
 sockjs-tornado >= 1.0.1
+pexpect >= 3.3
