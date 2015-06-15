@@ -2,25 +2,19 @@ import tornado.httpserver, tornado.web, tornado.ioloop
 from shutil import move
 from settings import MAX_WORKERS
 from sockjs.tornado import SockJSConnection, SockJSRouter
-from db_models import session, FileLookup
+from db_models import session, MainDatabase, insert_to_db, FileLookupByToken
 from converter import ConverterTask
 from STATE import GlobalSessionsTable
+import concurrent.futures
+import os
 from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
 
-
-def insert_to_db(md5_name, file_name):
-    new_file = FileLookup(md5_name=md5_name, real_name=file_name,
-                           token="".join(str(md5_name).split(".")[0:-1]))
-    session.add(new_file)
-    session.commit()
-    return new_file
-
-class RequestHandler(tornado.web.RequestHandler):
+class UploadPostRequestHandler(tornado.web.RequestHandler):
 
     dest_dir = __UPLOADS__
 
     def get(self):
-        pass
+        self.write("405. Not Allowed")
 
     def post(self):
         fname = self.request.body_arguments.get('infile_name')[0].decode("utf-8")
@@ -63,35 +57,28 @@ class ConvertionStatus(SockJSConnection):
     def on_close(self):
         del GlobalSessionsTable[self.global_obj_key]
 
-class FileHandler(tornado.web.RequestHandler):
+class FilePageHandler(tornado.web.RequestHandler):
     def get(self, token=None):
         try:
-            url=session.query(FileLookup).filter(FileLookup.token==token)[0].url
-            print(url)
+            self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
         except IndexError:
-            url="None"
-        self.render("static/file_page.html", token=token, url=url)
+            self.write('404. File not Found')
 
 
-import concurrent.futures
+if __name__ == '__main__':
 
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS)
+    WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS)
-WsRouter = SockJSRouter(ConvertionStatus, '/ws')
+    # Main App
+    application = tornado.web.Application([(r'/', MainPageHandler), (r'/uploaded', UploadPostRequestHandler),
+                                           (r'/status', ConvertionStatusPage),
+                                           (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": __STATIC__}),
+                                           (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": __COMPRESSED_FILES_FOLDER__}),
+                                           (r"/file/([^/]*)", FilePageHandler)])
 
-#Main App
-
-application = tornado.web.Application([(r'/', MainPageHandler), (r'/uploaded', RequestHandler),
-                                       (r'/status', ConvertionStatusPage),
-                                       (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": __STATIC__}),
-                                       (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": __COMPRESSED_FILES_FOLDER__}),
-                                       (r"/file/([^/]*)", FileHandler)])
-
-#Sockets App
-ws_app = tornado.web.Application(WsRouter.urls)
-
-
-if __name__=='__main__':
+    # Sockets App
+    ws_app = tornado.web.Application(WsRouter.urls)
 
     application.listen(8080)
     ws_app.listen(8084)

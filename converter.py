@@ -24,7 +24,6 @@ class ConverterTask(object):
         print("Running from ", self.source_file, " to ", self.dest)
         command = (['ffmpeg', '-i', self.source_file, '-c:v', 'libx264', '-strict', '-2', '-crf', '26', '-maxrate', (str(self.data['target_bitrate'])+'k'),
                          '-bufsize', '1835k', self.dest, '-y'])
-        # result = subprocess.Popen(command,stdout=subprocess.PIPE)
         thread = pexpect.spawn(' '.join(command))
         print("started %s" % command)
         cpl = thread.compile_pattern_list([pexpect.EOF, "frame= *\d+", '(.+)'])
