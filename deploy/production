@@ -1,0 +1,2 @@
+[video-compressor]
+compress.stepic.org  ansible_ssh_port=24
