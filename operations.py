@@ -6,6 +6,7 @@ from settings import FFPROBE_RUN_PATH
 '''
 Possible problems might cause if filename contains "Duration" and other keywords
 '''
+
 def get_length_in_sec(filename: str) -> int:
     result = subprocess.Popen([FFPROBE_RUN_PATH, filename], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     duration_string = [x.decode("utf-8") for x in result.stdout.readlines() if "Duration" in x.decode('utf-8')][-1]
@@ -32,7 +33,6 @@ def get_frame_count(filename: str) -> int:
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     frames = [x.decode("utf-8") for x in result.stdout.readlines() if "nb_frames=" in x.decode('utf-8')][0]
     return int(frames.split('=')[-1])
-
 
 if __name__ == '__main__':
     print(get_size('/Users/mehanig/Documents/MultTreadWorker.mp4'))

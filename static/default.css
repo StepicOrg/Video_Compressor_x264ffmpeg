@@ -29,6 +29,12 @@ footer {
   margin-bottom: 100px;
 }
 
+ul {
+    text-align: left;
+}
+
+li span
+    { position: relative; left: -10px; }
 
 
 h1 {

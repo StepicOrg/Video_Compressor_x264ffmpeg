@@ -2,8 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Video Converter For Stepic.org</title>
-<head>
+    <title>Error page</title>
     <link rel = "stylesheet" type="text/css" href="/static/default.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
@@ -13,22 +12,20 @@
     <script type="text/jsx" src="/static/main.js"></script>
 </head>
 <body>
-
-<header>
-        <div id="headerMain">Loading</div>
-</header>
-    <div id="content">
-        <div class="custom-file-upload">
-            <form name="upload" method="POST" enctype="multipart/form-data" action="/upload">
-                <input type="file" id="file" name="infile" />
-                <button  type="submit" class="file-upload-button" tabindex="-1">Upload</button>
-            </form>
-        </div>
+    <h2>OOPS. Something went wrong.</h2>
+    <span>Please try again.</span>
+    <span>Possible reasons which may cause that kind of problem:</span>
+    <div style="padding-left: 35%">
+        <ul>
+            <li><span>Your uploaded video is broken.</span></li>
+            <li><span>Your uploaded video isn't video.</span></li>
+            <li><span>Our servers are overloaded or updating a this moment.</span></li>
+            <li><span>Aliens finally took our storage.</span></li>
+            <li><span>Something went wrong.</span></li>
+        </ul>
     </div>
-<footer>
-    <div id="footer"></div>
-</footer>
-
-
+    <footer>
+        <div id="footer"></div>
+    </footer>
 </body>
 </html>

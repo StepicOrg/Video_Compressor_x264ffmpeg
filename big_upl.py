@@ -2,12 +2,13 @@ import tornado.httpserver, tornado.web, tornado.ioloop
 from shutil import move
 from settings import MAX_WORKERS
 from sockjs.tornado import SockJSConnection, SockJSRouter
-from db_models import session, MainDatabase, insert_to_db, FileLookupByToken
+from db_models import insert_to_db, FileLookupByToken
 from converter import ConverterTask
 from STATE import GlobalSessionsTable
 import concurrent.futures
-import os
+import logging
 from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
+
 
 class UploadPostRequestHandler(tornado.web.RequestHandler):
 
@@ -26,11 +27,14 @@ class UploadPostRequestHandler(tornado.web.RequestHandler):
         new_fname = ".".join([file_hash, file_ext])
         move(file_path, '%s/%s' % (self.dest_dir, new_fname))
         rec_obj = insert_to_db(new_fname, fname)
-
         task = ConverterTask('%s/%s' % (self.dest_dir, new_fname), '%s/%s' % (__COMPRESSED_FILES_FOLDER__, new_fname), curr=file_hash)
         converter = executor.submit(task.run)
         converter.add_done_callback(lambda x: GlobalSessionsTable[task.watchers].send('done'))
         self.render("static/status.html", token=file_hash, file_url=rec_obj.url)
+
+    def _handle_request_exception(self, e):
+        logging.error('error')
+        self.render("static/error.html")
 
 
 class MainPageHandler(tornado.web.RequestHandler):
@@ -57,6 +61,22 @@ class ConvertionStatus(SockJSConnection):
     def on_close(self):
         del GlobalSessionsTable[self.global_obj_key]
 
+
+# TODO: implement
+class APIHandler(tornado.web.RequestHandler):
+
+    def __operation__(self, operation, id):
+        if operation == "stop":
+            try:
+                pass
+            except Exception:
+                pass
+
+    def post(self, *args):
+        id = args[0]
+        self.__operation__(args[1], id)
+
+
 class FilePageHandler(tornado.web.RequestHandler):
     def get(self, token=None):
         try:
@@ -64,18 +84,18 @@ class FilePageHandler(tornado.web.RequestHandler):
         except IndexError:
             self.write('404. File not Found')
 
-
 if __name__ == '__main__':
 
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS)
     WsRouter = SockJSRouter(ConvertionStatus, '/ws')
 
     # Main App
-    application = tornado.web.Application([(r'/', MainPageHandler), (r'/uploaded', UploadPostRequestHandler),
-                                           (r'/status', ConvertionStatusPage),
+    application = tornado.web.Application([(r"/", MainPageHandler), (r'/uploaded', UploadPostRequestHandler),
+                                           (r"/status", ConvertionStatusPage),
                                            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": __STATIC__}),
                                            (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": __COMPRESSED_FILES_FOLDER__}),
-                                           (r"/file/([^/]*)", FilePageHandler)])
+                                           (r"/file/([^/]*)", FilePageHandler),
+                                           (r"/api/video/(.*)/(.*)", APIHandler)])
 
     # Sockets App
     ws_app = tornado.web.Application(WsRouter.urls)
