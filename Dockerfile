@@ -22,7 +22,7 @@ RUN curl -o nginx.tar.gz http://nginx.org/download/nginx-1.9.1.tar.gz \
  && rm -rf nginx-1.9.1 nginx-1.9.1.tar.gz
 
 # Clone video compressor repo and install python requirements
-RUN git clone https://github.com/mehanig/Video_Compressor_x264ffmpeg \
+RUN git clone https://github.com/StepicOrg/Video_Compressor_x264ffmpeg \
  && pip3 install -r Video_Compressor_x264ffmpeg/requirements.txt
 
 # Create folders required by nginx upload module
