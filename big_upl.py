@@ -33,7 +33,7 @@ class UploadPostRequestHandler(tornado.web.RequestHandler):
         self.render("static/status.html", token=file_hash, file_url=rec_obj.url)
 
     def _handle_request_exception(self, e):
-        logging.error('error')
+        logging.exception("Exception.")
         self.render("static/error.html")
 
 
