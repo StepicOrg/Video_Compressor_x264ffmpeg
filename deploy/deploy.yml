@@ -1,0 +1,16 @@
+---
+- hosts: video-compressor
+  vars:
+    docker_image: stepic/video-compressor
+    docker_tag: latest
+  become: yes
+  tasks:
+  - name: start video-compressor container
+    docker:
+      name: video-compressor
+      image: "{{ docker_image }}:{{ docker_tag }}"
+      pull: always
+      state: restarted
+      restart_policy: always
+      ports:
+        - "10080:80"
