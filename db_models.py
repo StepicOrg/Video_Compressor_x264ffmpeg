@@ -7,17 +7,6 @@ import os.path
 
 Base = declarative_base()
 
-engine = create_engine('sqlite:///compressor.db')
-
-dbpath = os.path.join(os.path.dirname(__file__), "compressor.db")
-if not os.path.isfile(dbpath):
-    Base.metadata.create_all(engine)
-
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
-
 def insert_to_db(md5_name, file_name):
     new_file = MainDatabase(md5_name=md5_name, real_name=file_name,
                            token=os.path.splitext(md5_name)[0])
@@ -55,3 +44,13 @@ class FileLookupByToken(object):
 
     def file_url(self):
         return "/" + URL_GET_DIRECT_FILE_PATH + "/" + self.db_obj.md5_name
+
+engine = create_engine('sqlite:///compressor.db')
+
+dbpath = os.path.join(os.path.dirname(__file__), "compressor.db")
+if not os.path.isfile(dbpath):
+    Base.metadata.create_all(engine)
+
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
