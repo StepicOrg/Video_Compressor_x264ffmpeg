@@ -41,9 +41,11 @@ class MainPageHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("static/index.html")
 
+
 class ConvertionStatusPage(tornado.web.RequestHandler):
     def get(self):
         self.render("static/status.html")
+
 
 class ConvertionStatus(SockJSConnection):
 
