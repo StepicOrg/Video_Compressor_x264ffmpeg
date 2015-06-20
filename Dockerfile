@@ -21,7 +21,8 @@ RUN curl -o nginx.tar.gz http://nginx.org/download/nginx-1.9.1.tar.gz \
  && popd \
  && rm -rf nginx-1.9.1 nginx-1.9.1.tar.gz
 
-# Clone video compressor repo and install python requirements
+# Invalidate cahce and clone video compressor repo and install python requirements
+ADD build_date /.build_date
 RUN git clone https://github.com/StepicOrg/Video_Compressor_x264ffmpeg \
  && pip3 install -r Video_Compressor_x264ffmpeg/requirements.txt
 
