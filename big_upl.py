@@ -4,10 +4,10 @@ from settings import MAX_WORKERS
 from sockjs.tornado import SockJSConnection, SockJSRouter
 from db_models import insert_to_db, FileLookupByToken
 from converter import ConverterTask
-from STATE import GlobalSessionsTable
 import concurrent.futures
 import logging
 from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
+from STATE import *
 
 
 class UploadPostRequestHandler(tornado.web.RequestHandler):
@@ -54,21 +54,20 @@ class ConvertionStatus(SockJSConnection):
     def on_open(self, info):
         print('Someone connected', self, info)
 
-    def on_message(self, data):
-        self.global_obj_key = data
-        GlobalSessionsTable[data] = self
+    def on_message(self, token):
+        self.global_obj_key = token
+        GlobalSessionsTable[token] = self
 
     def on_close(self):
         del GlobalSessionsTable[self.global_obj_key]
 
 
-# TODO: implement
 class APIHandler(tornado.web.RequestHandler):
 
     def __operation__(self, operation, id):
         if operation == "stop":
             try:
-                pass
+                ConverterTask.stop(_id=id)
             except Exception:
                 pass
 

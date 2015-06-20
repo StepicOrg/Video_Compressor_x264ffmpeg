@@ -1,2 +1,2 @@
 GlobalSessionsTable = {}
-
+GlobalRunningTaskTable = {}

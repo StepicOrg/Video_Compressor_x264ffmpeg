@@ -1,6 +1,7 @@
 __author__ = 'mehanig'
 import subprocess
 import os
+import signal
 from settings import FFPROBE_RUN_PATH
 
 '''
@@ -33,6 +34,9 @@ def get_frame_count(filename: str) -> int:
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     frames = [x.decode("utf-8") for x in result.stdout.readlines() if "nb_frames=" in x.decode('utf-8')][0]
     return int(frames.split('=')[-1])
+
+def stop_process_by_pid(_pid):
+    os.kill(_pid, signal.SIGKILL)
 
 if __name__ == '__main__':
     print(get_size('/Users/mehanig/Documents/MultTreadWorker.mp4'))

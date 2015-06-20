@@ -1,7 +1,7 @@
 import pexpect
 from settings import DEFAULT_OUT_FILE_SIZE_BYTES
 from operations import *
-from STATE import GlobalSessionsTable
+from STATE import GlobalSessionsTable, GlobalRunningTaskTable
 import re
 
 class ConverterTask(object):
@@ -21,6 +21,7 @@ class ConverterTask(object):
         self.watchers = curr
         self.exitstatus = None
         self.pid = None
+        GlobalRunningTaskTable[self.watchers] = self
 
     def run(self):
         print("Running from ", self.source_file, " to ", self.dest)
@@ -53,3 +54,8 @@ class ConverterTask(object):
                 # unknown_line = thread.match.group(0)
                 # print unknown_line
                 pass
+
+    @classmethod
+    def stop(cls, _id):
+        pid = GlobalRunningTaskTable[_id].pid
+        stop_process_by_pid(_pid=pid)
