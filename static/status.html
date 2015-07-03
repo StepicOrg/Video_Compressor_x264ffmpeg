@@ -10,8 +10,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
     <script>
-         var conn = new SockJS('//' + window.location.host + ':8084/ws');
-         console.log('//' + window.location.host + ':8084/ws');
+         var conn = new SockJS('//' + window.location.host + '/ws');
+         console.log('//' + window.location.host + '/ws');
          conn.onmessage = function(e){
              console.log(e);
              if (e.type === 'message' && e.data==="done"){
