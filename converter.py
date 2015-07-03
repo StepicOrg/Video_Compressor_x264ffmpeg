@@ -38,6 +38,7 @@ class ConverterTask(object):
                 print("Finished task")
                 thread.close()
                 self.exitstatus = thread.exitstatus
+                break
             elif i == 1:
                 frame_number = thread.match.group(0)
                 if self.socket_obj:
@@ -58,7 +59,9 @@ class ConverterTask(object):
 
     def stop_and_delete_original(self):
         try:
-            GlobalSessionsTable[self.watchers].send('done')
+            sockjs_conn = GlobalSessionsTable.get(self.watchers)
+            if sockjs_conn:
+                sockjs_conn.send('done')
             os.remove(self.source_file)
         except Exception as e:
             logging.exception("stop_and_delete_original error: %s", e)
