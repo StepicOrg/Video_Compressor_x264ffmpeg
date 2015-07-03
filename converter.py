@@ -3,6 +3,7 @@ from settings import DEFAULT_OUT_FILE_SIZE_BYTES
 from operations import *
 from STATE import GlobalSessionsTable, GlobalRunningTaskTable
 import re
+import logging
 
 class ConverterTask(object):
 
@@ -55,7 +56,14 @@ class ConverterTask(object):
                 # print unknown_line
                 pass
 
+    def stop_and_delete_original(self):
+        try:
+            GlobalSessionsTable[self.watchers].send('done')
+            os.remove(self.source_file)
+        except Exception as e:
+            logging.exception("stop_and_delete_original error: %s", e)
+
     @classmethod
-    def stop(cls, _id):
+    def stop_by_pid(cls, _id):
         pid = GlobalRunningTaskTable[_id].pid
         stop_process_by_pid(_pid=pid)

@@ -14,6 +14,11 @@ class UploadPostRequestHandler(tornado.web.RequestHandler):
 
     dest_dir = __UPLOADS__
 
+    def __init__(self, *args, **kwargs):
+        self.task = None
+        logging.debug("Created UploadPostRequestHandler obj %s", self)
+        super(UploadPostRequestHandler, self).__init__(*args, **kwargs)
+
     def get(self):
         self.write("405. Not Allowed")
 
@@ -29,7 +34,7 @@ class UploadPostRequestHandler(tornado.web.RequestHandler):
         rec_obj = insert_to_db(new_fname, fname)
         task = ConverterTask('%s/%s' % (self.dest_dir, new_fname), '%s/%s' % (__COMPRESSED_FILES_FOLDER__, new_fname), curr=file_hash)
         converter = executor.submit(task.run)
-        converter.add_done_callback(lambda x: GlobalSessionsTable[task.watchers].send('done'))
+        converter.add_done_callback(lambda x: task.stop_and_delete_original())
         self.render("static/status.html", token=file_hash, file_url=rec_obj.url)
 
     def _handle_request_exception(self, e):
@@ -69,7 +74,7 @@ class APIHandler(tornado.web.RequestHandler):
     def __operation__(self, operation, id):
         if operation == "stop":
             try:
-                ConverterTask.stop(_id=id)
+                ConverterTask.stop_by_pid(_id=id)
             except Exception:
                 pass
 

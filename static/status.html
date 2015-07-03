@@ -1,17 +1,17 @@
 <html>
 <head>
     <title>Conversion</title>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script src="http://cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
     <link rel = "stylesheet" type="text/css" href="/static/default.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
     <script type="text/jsx" src="/static/react_renders.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
     <script>
-         var conn = new SockJS('http://' + window.location.host + ':8084/ws');
-         console.log('http://' + window.location.host + ':8084/ws');
+         var conn = new SockJS('//' + window.location.host + ':8084/ws');
+         console.log('//' + window.location.host + ':8084/ws');
          conn.onmessage = function(e){
              console.log(e);
              if (e.type === 'message' && e.data==="done"){
