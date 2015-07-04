@@ -10,21 +10,26 @@
     <script type="text/jsx" src="/static/react_renders.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="//cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
     <script type="text/jsx" src="/static/main.js"></script>
+    <script src='/static/js/upload.js'></script>
 </head>
 <body>
 
 <header>
         <div id="headerMain">Loading</div>
 </header>
+
     <div id="content">
         <div class="custom-file-upload">
-            <form name="upload" method="POST" enctype="multipart/form-data" action="/upload">
-                <input type="file" id="file" name="infile" />
-                <button  type="submit" class="file-upload-button" tabindex="-1">Upload</button>
-            </form>
+                    <input type='file' id='_file' name="infile">
+                    <button type='submit' class="file-upload-button" tabindex="-1" id='_submit' value='upload'>UPLOAD</button>
         </div>
     </div>
+    <div class='progress_outer'>
+                <div id='_progress' class='progress'></div>
+    </div>
+
 <footer>
     <div id="footer"></div>
 </footer>

@@ -42,6 +42,7 @@ class ConverterTask(object):
             elif i == 1:
                 frame_number = thread.match.group(0)
                 if self.socket_obj:
+                    # self.socket_obj = GlobalSessionsTable[self.watchers]
                     # Strange behavior here, you can't sent bytes string to sockets?
                     m = re.search(r'frame=.*?(\d+)', frame_number.decode("UTF-8"))
                     if m:
@@ -62,6 +63,7 @@ class ConverterTask(object):
             sockjs_conn = GlobalSessionsTable.get(self.watchers)
             if sockjs_conn:
                 sockjs_conn.send('done')
+                del GlobalSessionsTable[self.watchers]
             os.remove(self.source_file)
         except Exception as e:
             logging.exception("stop_and_delete_original error: %s", e)

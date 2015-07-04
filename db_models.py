@@ -45,6 +45,9 @@ class FileLookupByToken(object):
     def file_url(self):
         return "/" + URL_GET_DIRECT_FILE_PATH + "/" + self.db_obj.md5_name
 
+    def page_url(self):
+        return "/" + URL_GET_FILE_PAGE_PATH + "/" + self.db_obj.token
+
 engine = create_engine('sqlite:///compressor.db')
 
 dbpath = os.path.join(os.path.dirname(__file__), "compressor.db")
