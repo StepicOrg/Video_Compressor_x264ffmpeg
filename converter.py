@@ -7,12 +7,13 @@ import logging
 
 class ConverterTask(object):
 
-    def __init__(self, _source_file, _dest, _socket_obj=None, curr=None, _target_size=None):
+    def __init__(self, _source_file, _dest, _socket_obj_set=None, curr=None, _target_size=None):
         if not _target_size:
             self.target_size = DEFAULT_OUT_FILE_SIZE_BYTES
         else:
             self.target_size = _target_size
-        self.socket_obj = _socket_obj
+        self.socket_obj_set = set()
+        self.socket_obj_set.add(_socket_obj_set)
         self.source_file = os.path.join(os.path.dirname(__file__), _source_file)
         self.dest = os.path.join(os.path.dirname(__file__), _dest)
         self.data = {'duration': get_length_in_sec(self.source_file), 'bitrate': get_bitrate(self.source_file),
@@ -41,17 +42,23 @@ class ConverterTask(object):
                 break
             elif i == 1:
                 frame_number = thread.match.group(0)
-                if self.socket_obj:
-                    # self.socket_obj = GlobalSessionsTable[self.watchers]
+                if self.socket_obj_set or GlobalSessionsTable.get(self.watchers):
+                    if GlobalSessionsTable.get(self.watchers):
+                        self.socket_obj_set = set.copy(GlobalSessionsTable[self.watchers])
                     # Strange behavior here, you can't sent bytes string to sockets?
                     m = re.search(r'frame=.*?(\d+)', frame_number.decode("UTF-8"))
                     if m:
                         int_frame = m.group(1)
                     else:
                         int_frame = "Not Found"
-                    self.socket_obj.send({'frame': int_frame, 'all_frames': self.data.get('all_frames')})
-                elif GlobalSessionsTable.get(self.watchers):
-                    self.socket_obj = GlobalSessionsTable[self.watchers]
+                    if type(self.socket_obj_set) == set:
+                        for o in self.socket_obj_set:
+                            if o:
+                                o.send({'frame': int_frame, 'all_frames': self.data.get('all_frames')})
+                    else:
+                        self.socket_obj_set.send({'frame': int_frame, 'all_frames': self.data.get('all_frames')})
+                # elif GlobalSessionsTable.get(self.watchers):
+                #     self.socket_obj = GlobalSessionsTable[self.watchers]
             elif i == 2:
                 # ffmpeg output is strange, so we need only 1 line of it
                 # unknown_line = thread.match.group(0)

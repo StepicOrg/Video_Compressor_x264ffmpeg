@@ -70,7 +70,12 @@ class ConvertionStatus(SockJSConnection):
 
     def on_message(self, token):
         self.global_obj_key = token
-        GlobalSessionsTable[token] = self
+        if not GlobalSessionsTable.get(token):
+            print('CREATED!')
+            GlobalSessionsTable[token] = set()
+        GlobalSessionsTable[token].add(self)
+        print("ADDED!!!")
+        print(GlobalSessionsTable[token])
 
     def on_close(self):
         del GlobalSessionsTable[self.global_obj_key]
