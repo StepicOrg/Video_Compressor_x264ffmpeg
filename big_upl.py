@@ -97,11 +97,12 @@ class APIHandler(tornado.web.RequestHandler):
 
 class FilePageHandler(tornado.web.RequestHandler):
     def get(self, token=None):
+        # self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
         try:
-            if not GlobalSessionsTable[token]:
+            if not token in GlobalRunningTaskTable:
                 self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
             else:
-                ConvertionStatusPage.get(token)
+                self.render("static/status.html", token=token, file_url=FileLookupByToken(token).page_url())
 
         except IndexError:
             self.write('404. File not Found')
