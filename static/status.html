@@ -13,7 +13,6 @@
          var conn = new SockJS('//' + window.location.host + '/ws');
          console.log('//' + window.location.host + '/ws');
          conn.onmessage = function(e){
-             console.log(e);
              if (e.type === 'message' && e.data==="done"){
                  $('#notReady').text("READY! Grab your file!");
              } else if (e.type === 'message') {
@@ -41,7 +40,7 @@
             </div>
     </div>
     <div>
-        <a href="/file/{{token}}">Your file page</a>
+        <a href="/file/{{token}}">Your file page (Not available while compress in progress)</a>
     </div>
 </body>
 </html>

@@ -36,7 +36,7 @@ class ConverterTask(object):
         while True:
             i = thread.expect_list(cpl, timeout=None)
             if i == 0:
-                print("Finished task")
+                print("Finished task:", self.watchers)
                 thread.close()
                 self.exitstatus = thread.exitstatus
                 break
@@ -69,9 +69,11 @@ class ConverterTask(object):
         try:
             sockjs_conn = GlobalSessionsTable.get(self.watchers)
             if sockjs_conn:
-                sockjs_conn.send('done')
+                for con in sockjs_conn:
+                    con.send('done')
                 del GlobalSessionsTable[self.watchers]
             os.remove(self.source_file)
+            GlobalRunningTaskTable.pop(self.watchers)
         except Exception as e:
             logging.exception("stop_and_delete_original error: %s", e)
 

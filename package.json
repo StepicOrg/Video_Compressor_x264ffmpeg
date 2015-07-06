@@ -1,0 +1,14 @@
+{
+  "name": "video-compressor",
+  "version": "0.2.0",
+  "devDependencies": {
+    "grunt": "latest",
+    "grunt-babel": "^5.0.1",
+    "grunt-contrib-handlebars": "~0.10.2",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "load-grunt-tasks": "^3.2.0",
+    "require": "2.4.18"
+  }
+}

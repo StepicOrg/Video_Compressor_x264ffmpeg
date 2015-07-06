@@ -71,10 +71,8 @@ class ConvertionStatus(SockJSConnection):
     def on_message(self, token):
         self.global_obj_key = token
         if not GlobalSessionsTable.get(token):
-            print('CREATED!')
             GlobalSessionsTable[token] = set()
         GlobalSessionsTable[token].add(self)
-        print("ADDED!!!")
         print(GlobalSessionsTable[token])
 
     def on_close(self):
@@ -98,6 +96,7 @@ class APIHandler(tornado.web.RequestHandler):
 class FilePageHandler(tornado.web.RequestHandler):
     def get(self, token=None):
         # self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
+        print("DATA:", [x for x in GlobalRunningTaskTable])
         try:
             if not token in GlobalRunningTaskTable:
                 self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
