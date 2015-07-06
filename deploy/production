@@ -1,2 +1,5 @@
 [video-compressor]
 compress.stepic.org  ansible_ssh_port=24
+
+[video-compressor:vars]
+host_video_dir=/Johnny/stepic/video

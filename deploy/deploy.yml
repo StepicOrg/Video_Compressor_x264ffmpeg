@@ -16,3 +16,5 @@
         IS_DOCKER: "true"
       ports:
         - "10080:80"
+      volumes:
+        - "{{ host_video_dir }}:/video"
