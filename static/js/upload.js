@@ -22,7 +22,7 @@ jQuery(document).ready(function(){
                     //document.body.innerHTML = request.responseText;
                     var rsp = JSON.parse(request.response);
                     if(rsp.status === "OK"){
-                        window.location += 'status/' + rsp.token
+                        window.location += 'status/' + rsp.token;
                     }
                     console.log(rsp);
                     //window.location +=
@@ -30,7 +30,9 @@ jQuery(document).ready(function(){
                     var resp = {
                         status: 'error',
                         data: 'Unknown error occurred: [' + request.responseText + ']'
+
                     };
+                    window.location += 'error';
                 }
                 console.log(resp.status + ': ' + resp.data);
             }

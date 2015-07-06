@@ -10,6 +10,7 @@ uploads/
 ready/
 compressor.db
 video
+node_modules
 
 # C extensions
 *.so

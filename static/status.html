@@ -1,14 +1,20 @@
 <html>
-<head>
+<head lang="en">
+    <meta charset="UTF-8">
     <title>Conversion</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script src="//cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
     <link rel = "stylesheet" type="text/css" href="/static/default.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
     <script type="text/jsx" src="/static/react_renders.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react-with-addons.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+    <script src="//cdn.jsdelivr.net/sockjs/0.3/sockjs.min.js"></script>
+    <script src='/static/js/upload.js'></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script type="text/javascript" src="/static/js/bootstrap-filestyle.min.js"> </script>
+</head>
+
     <script>
          var conn = new SockJS('//' + window.location.host + '/ws');
          console.log('//' + window.location.host + '/ws');
@@ -26,9 +32,29 @@
     </script>
 </head>
 <body>
-    <header>
-        <div id="header"></div>
-    </header>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Stepic Compressor</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+
     <h2>Conversion in progress</h2>
     <div id="notReady">
         Your token is <span id="token">{{ token }}</span>
@@ -42,5 +68,9 @@
     <div>
         <a href="/file/{{token}}">Your file page (Not available while compress in progress)</a>
     </div>
+
+    <footer>
+        <div id="footer"></div>
+    </footer>
 </body>
 </html>

@@ -10,7 +10,14 @@ from settings import __UPLOADS__, __COMPRESSED_FILES_FOLDER__, __STATIC__
 from STATE import *
 
 
-class UploadPostRequestHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    pass
+    # def _handle_request_exception(self, e):
+    #     logging.error('Handled exception!')
+    #     self.render("static/error.html")
+
+
+class UploadPostRequestHandler(BaseHandler):
 
     dest_dir = __UPLOADS__
 
@@ -44,19 +51,42 @@ class UploadPostRequestHandler(tornado.web.RequestHandler):
         self.write({'status': "OK", 'token': file_hash})
 
     def _handle_request_exception(self, e):
-        logging.exception("Exception.")
+        logging.error('Handled exception!')
         self.render("static/error.html")
 
 
-class MainPageHandler(tornado.web.RequestHandler):
+class MainPageHandler(BaseHandler):
     def get(self):
         self.render("static/index.html")
 
+    def _handle_request_exception(self, e):
+        logging.exception("Exception from AAA request.")
+        self.render("static/error.html")
 
-class ConvertionStatusPage(tornado.web.RequestHandler):
+
+class AboutPageHandler(BaseHandler):
+    def get(self):
+        self.render("static/about.html")
+
+
+class ContactPageHandler(BaseHandler):
+    def get(self):
+        self.render("static/contact.html")
+
+
+class ErrorPage(BaseHandler):
+    def get(self):
+        self.render("static/error.html")
+
+
+class ConvertionStatusPage(BaseHandler):
     def get(self, token=None):
         # self.write(token)
         self.render("static/status.html", token=token, file_url=FileLookupByToken(token).page_url())
+
+    def _handle_request_exception(self, e):
+        logging.exception("Exception from CONV request.")
+        self.render("static/error.html")
 
 
 class ConvertionStatus(SockJSConnection):
@@ -93,7 +123,7 @@ class APIHandler(tornado.web.RequestHandler):
         self.__operation__(args[1], id)
 
 
-class FilePageHandler(tornado.web.RequestHandler):
+class FilePageHandler(BaseHandler):
     def get(self, token=None):
         # self.render("static/file_page.html", token=token, url=FileLookupByToken(token).file_url())
         print("DATA:", [x for x in GlobalRunningTaskTable])
@@ -117,6 +147,9 @@ if __name__ == '__main__':
                                            (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": __STATIC__}),
                                            (r"/get/(.*)", tornado.web.StaticFileHandler, {"path": __COMPRESSED_FILES_FOLDER__}),
                                            (r"/file/([^/]*)", FilePageHandler),
+                                           (r"/about", AboutPageHandler),
+                                           (r"/contact", ContactPageHandler),
+                                           (r"/error", ErrorPage),
                                            (r"/api/video/(.*)/(.*)", APIHandler)])
 
     # Sockets App
@@ -125,4 +158,5 @@ if __name__ == '__main__':
     application.listen(8080)
     ws_app.listen(8084)
 
-    tornado.ioloop.IOLoop.instance().start()
+    app = tornado.ioloop.IOLoop()
+    app.instance().start()
