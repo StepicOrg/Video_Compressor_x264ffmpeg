@@ -12,5 +12,7 @@
       pull: always
       state: reloaded
       restart_policy: always
+      env:
+        IS_DOCKER: "true"
       ports:
         - "10080:80"
