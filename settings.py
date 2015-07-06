@@ -7,6 +7,8 @@ DEFAULT_OUT_FILE_SIZE_BYTES = 190 * 1024 * 1024
 
 
 PACKAGE_ROOT = os.path.dirname(os.path.realpath(__file__))
-__UPLOADS__ = os.path.join(PACKAGE_ROOT, "video", "uploads")
-__COMPRESSED_FILES_FOLDER__ = os.path.join(PACKAGE_ROOT, "video", "converted")
+VIDEO_DIR = ("/video" if "IS_DOCKER" in os.environ else
+             os.path.join(PACKAGE_ROOT, "video"))
+__UPLOADS__ = os.path.join(VIDEO_DIR, "uploads")
+__COMPRESSED_FILES_FOLDER__ = os.path.join(VIDEO_DIR, "converted")
 __STATIC__ = os.path.join(os.path.dirname(__file__), "static")
