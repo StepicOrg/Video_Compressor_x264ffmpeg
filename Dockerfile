@@ -19,22 +19,15 @@ RUN curl -o nginx.tar.gz http://nginx.org/download/nginx-1.9.1.tar.gz \
  && make \
  && make install \
  && popd \
- && rm -rf nginx-1.9.1 nginx-1.9.1.tar.gz
+ && rm -rf nginx-1.9.1 nginx.tar.gz
 
-# Invalidate cahce and clone video compressor repo and install python requirements
+# Invalidate cache and clone video compressor repo and install python requirements
 ADD build_date /.build_date
 RUN git clone https://github.com/StepicOrg/Video_Compressor_x264ffmpeg \
  && pip3 install -r Video_Compressor_x264ffmpeg/requirements.txt
 
-# Create folders required by nginx upload module
-RUN mkdir -p /nginx_folder/upload/tmp/{0..9} \
- && chmod -R 777 /nginx_folder
-
-RUN cd Video_Compressor_x264ffmpeg \
- && mkdir -p video/uploads \
- && mkdir -p video/converted
+ADD docker_run.sh /run.sh
 
 EXPOSE 80 8080 8084
 
-CMD /usr/local/nginx/sbin/nginx -c /Video_Compressor_x264ffmpeg/nginx_conf/nginx.conf \
- && python3 Video_Compressor_x264ffmpeg/big_upl.py
+CMD /run.sh
