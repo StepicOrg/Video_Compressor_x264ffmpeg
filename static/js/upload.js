@@ -5,14 +5,11 @@ jQuery(document).ready(function(){
 
     var upload = function(){
 
-        if(_file.files.length === 0){
+        if(_file.files.length != 1){
             return;
         }
-
         var data = new FormData();
-        for (var i = 0, f; f = _file.files[i]; i++) {
-                data.append('infile', f);
-            }
+        data.append('infile', _file.files[0]);
 
         var request = new XMLHttpRequest();
         request.onreadystatechange = function(){
